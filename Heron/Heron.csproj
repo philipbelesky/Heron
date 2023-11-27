@@ -341,8 +341,15 @@
     <None Include="Resources\heron-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>Move /Y "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).dll" "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).gha"</PostBuildEvent>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform(Windows))">
+    <PostBuildEvent>
+      Move /Y "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).dll" "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).gha"
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSUnixLike())">
+    <PostBuildEvent>
+      cp "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)bin\$(ConfigurationName)\$(ProjectName).gha"
+    </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
